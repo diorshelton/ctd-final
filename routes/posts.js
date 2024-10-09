@@ -6,7 +6,7 @@ const {getAllPosts, getPost, createPost, updatePost, deletePost} = require('../c
 router.route("/").get(getAllPosts);
 router.post("/", createPost);
 router.get("/:id", getPost);
-router.delete("/:id", deletePost);
 router.patch("/:id", updatePost);
+router.delete("/:id", deletePost);
 
-module.exports = router 
+module.exports = router

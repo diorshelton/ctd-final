@@ -9,7 +9,8 @@ const getPost = async (req, res)=> {
 const createPost = async (req, res)=> {
   res.send('Create a post') 
 }
-const updatePost = async (req, res)=> {
+const updatePost = async (req, res) => {
+  console.log(req.params)
   res.send('Update a post') 
 }
 const deletePost = async (req, res)=> {

@@ -1,27 +1,71 @@
-const Post = require("../models/Post")
-const { StatusCodes } = require("http-status-codes")
+const { NotFoundError } = require("../errors");
+const Post = require("../models/Post");
+const { StatusCodes } = require("http-status-codes");
 
 const getAllPosts = async (req, res) => {
-  res.send("Get all posts"); 
-}
+	const posts = await Post.find({ createdBy: req.user.userId });
+	res.status(StatusCodes.OK).json({ posts, count: posts.length });
+};
+const getPost = async (req, res, next) => {
+	try {
+		const {
+			user: { userId },
+			params: { id: postId },
+		} = req;
 
-const getPost = async (req, res) => {
-
-  res.send("Get post hit")
-      // console.log(req.params, req.user);
-}
-
-const createPost = async (req, res)=> {
-  res.send('Create a post') 
-}
+    const post = await Post.findOne({ _id: postId, createdBy: userId });
+		if (!post) {
+			throw new NotFoundError(`No post with ${postId}`);
+		}
+		res.status(StatusCodes.OK).json({ post });
+  } catch (err) {
+    // More user friendly error needed
+    console.log(err);
+    res.status(StatusCodes.NOT_FOUND).json({msg:"Post not found"})
+	}
+};
+const createPost = async (req, res) => {
+		req.body.createdBy = req.user.userId;
+		const post = await Post.create(req.body);
+		res.status(StatusCodes.CREATED).json({ post });
+};
 
 const updatePost = async (req, res) => {
-  console.log(req.params)
-  res.send('Update a post') 
-}
+	const {
+		body: { title, message },
+		user: { userId },
+		params: { id: postId },
+	} = req;
 
-const deletePost = async (req, res)=> {
-  res.send('Delete a post') 
-}
+	if (title === "" || message === "") {
+		throw new BadRequestError("Title or Message fiels cannot be empty");
+	}
 
-module.exports = { getAllPosts, getPost, createPost, updatePost, deletePost}
+	const post = await Post.findByIdAndUpdate(
+		{ _id: postId, createdBy: userId },
+		req.body,
+		{ new: true, runValidators: true }
+	);
+
+	if (!post) {
+		throw new NotFoundError(`No post with id ${postId}`);
+	}
+	res.status(StatusCodes.OK).json({ post });
+};
+
+const deletePost = async (req, res) => {
+		const {
+			user: { userId },
+			params: { id: postId },
+		} = req;
+		const post = await Post.findByIdAndDelete({
+			_id: postId,
+			createdBy: userId,
+		});
+		if (!post) {
+			throw new NotFoundError(`No post with id ${postId}`);
+		}
+		res.status(StatusCodes.OK).json({ msg: "The entry was deleted" });
+};
+
+module.exports = { getAllPosts, getPost, createPost, updatePost, deletePost };

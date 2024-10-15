@@ -3,31 +3,24 @@ const Post = require("./Post");
 
 const CommentSchema = new mongoose.Schema(
   {
-    post_id: {
+    postId: {
       type: mongoose.Types.ObjectId,
       ref: Post,
       required: true,
     },
-		user_id: {
+		userId: {
 			type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
+      trim:true,
 		},
 		content: {
 			type: String,
 			maxLength: 100,
-			required: true,
+			required: [true, "Please enter a comment"]
     },
-    children: {
-      type: [{
-        type: Schema.ObjectId,
-        ref: "Comment"
-      }]
-    },
-    counter: {
-      type: Number,
-      required:true,
-    }
 	},
 	{ timestamps: true }
 );
+
+module.exports = mongoose.model("Comment", CommentSchema)

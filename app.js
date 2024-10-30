@@ -3,6 +3,10 @@ require("express-async-errors")
 const cors = require("cors")
 const express = require("express");
 const app = express();
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+
+const MongoDBStore = require("connect-mongodb-session")(session)
 
 // Connect DB
 const connectDB = require("./db/connect");
@@ -23,6 +27,10 @@ const errorHandlerMiddleWare = require("./middleware/error-handler")
 app.use(express.json());
 app.use(cors())
 
+// Track token for login and register
+app.use("/api/v1/posts", (req, res) => {
+	console.log(req.user)
+})
 // Routes
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/posts", authenticateUser, postsRouter);

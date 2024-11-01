@@ -23,7 +23,16 @@ const login = async (req, res) => {
 		throw new UnauthenticatedError("Invalid Credentials");
 	}
 	const token = user.createJWT();
-	res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+	let cookieOptions = {
+		expires: new Date(Date.now() + 90* 24 * 60 * 60 * 100),
+		httpOnly: true,
+		secure: false,
+	};
+	if (process.env.NODE_ENV === "production") {
+		cookieOptions.secure = true
+	}
+
+	res.cookie("access_token", token, cookieOptions).status(StatusCodes.CREATED).json({user:{name:user.name}, token})
 };
 
 module.exports = { register, login };

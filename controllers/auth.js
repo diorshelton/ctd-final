@@ -26,13 +26,15 @@ const login = async (req, res) => {
 	let cookieOptions = {
 		expires: new Date(Date.now() + 90* 24 * 60 * 60 * 100),
 		httpOnly: true,
-		secure: false,
+		sameSite: 'None',
+		secure: true,
 	};
 	if (process.env.NODE_ENV === "production") {
 		cookieOptions.secure = true
 	}
-
-	res.cookie("access_token", token, cookieOptions).status(StatusCodes.CREATED).json({user:{name:user.name}, token})
+  res.set('Access-Control-Allow-Credentials', 'true');
+	res.set({'Access-Control-Allow-Origin': req.headers.origin})
+	res.cookie("access_token", token, cookieOptions).status(StatusCodes.OK).json({user:{name:user.name}, token})
 };
 
 module.exports = { register, login };

@@ -6,9 +6,9 @@ const cookieParser = require("cookie-parser");
 
 const app = express();
 
-app.use(cookieParser())
 // json body parser
 app.use(express.json());
+app.use(cookieParser());
 
 // Connect DB
 const connectDB = require("./db/connect");
@@ -26,8 +26,17 @@ const errorHandlerMiddleWare = require("./middleware/error-handler");
 
 // Middleware
 
-app.use(cors());
-
+app.use(
+	cors({
+		origin: "http://127.0.0.1:5173",
+		credentials: true,
+	})
+);
+		
+app.use("/api/v1/", (req, res, next) => {
+	console.log("app.js", req.headers);
+	next();
+});
 
 // Routes
 app.use("/api/v1/auth", authRouter);

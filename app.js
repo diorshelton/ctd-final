@@ -34,7 +34,7 @@ app.use(
 );
 		
 app.use("/api/v1/", (req, res, next) => {
-	console.log("app.js", req.headers);
+	console.log("app.js");
 	next();
 });
 

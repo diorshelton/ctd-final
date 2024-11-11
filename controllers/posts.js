@@ -3,12 +3,12 @@ const { NotFoundError, BadRequestError } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 
 const getAllPosts = async (req, res) => {
-	const posts = await Post.find({ createdBy: req.user.userId });
+	const data = await Post.find({ createdBy: req.user.userId });
 
-	if (posts.length === 0) {
+	if (data.length === 0) {
 		res.status(StatusCodes.OK).json({ msg: "No posts to display yet" });
 	} else {
-		res.status(StatusCodes.OK).json({ posts, count: posts.length });
+		res.status(StatusCodes.OK).json({ data, count: data.length });
 	}
 };
 const getPost = async (req, res) => {

@@ -32,9 +32,9 @@ app.use(
 		credentials: true,
 	})
 );
-		
+	
 app.use("/api/v1/", (req, res, next) => {
-	console.log("app.js");
+	console.log("app.js", req);
 	next();
 });
 
